@@ -114,6 +114,14 @@ function resolve(tpl) {
     return new Function('__data', fnStr);
 }
 
+function isJsFile(tpath) {
+    return path.extname(tpath) === '.js';
+}
+
+function wrapJsScript(jsScript) {
+    return '<script type="text/javascript">' + jsScript + '</script>';
+}
+
 /**
  * SSI is a tool to resolve ssi syntax.
  *
@@ -227,6 +235,10 @@ SSI.prototype = {
                                         return next(err);
                                     }
                                     content = content.slice(0, matches.index) + innerContent + content.slice(matches.index + seg.length);
+
+                                    if (isJsFile(tpath)) {
+                                        content = wrapJsScript(content);
+                                    }
                                     next(null, content);
                                 });
                             }
